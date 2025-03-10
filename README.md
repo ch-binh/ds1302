@@ -126,6 +126,14 @@ int hal_gpio_ds1302_rst_write(uint8_t val)
 - DS1302 operates at **3.3V or 5V**.
 - connect a **backup battery** to maintain time when power is lost.
 
+## Power Consumption experiment
+- Measurement device: Nordic PPK2
+- Condition: Input supply to VCC2 (main power souce)
+- Result: 30uA @ 2V (datasheet: 25uA) and 88uA @5V (datasheet: 80uA)
+
+![Power consumption @ 2V, supply with main power, result 30uA](doc/pwr_consump_at_2V_VCC2.png)
+![Power consumption @ 5V, supply with main power, result 88uA](doc/pwr_consump_at_5V_VCC2.png)
+
 ## License
 This driver is open-source and can be used freely in any project.
 ---
