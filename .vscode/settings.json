@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "main.h": "c",
+        "ds1302.h": "c",
+        "ds1302_hw.h": "c",
+        "hal_usart.h": "c"
+    },
+    "cortex-debug.variableUseNaturalFormat": true
+}

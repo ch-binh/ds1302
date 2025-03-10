@@ -1,6 +1,9 @@
 
 #include "hal_gpio.h"
 #include "main.h"
+
+static pin_mode_e _data_pin_state;
+
 void MX_GPIO_Init(void)
 {
   /* GPIO Ports Clock Enable */
@@ -83,7 +86,7 @@ void hal_gpio_ds1302_dat_pin_init(pin_mode_e mode)
   { // INPUT MODE
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   }
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 
   HAL_GPIO_Init(DS1302_DAT_PORT, &GPIO_InitStruct);
 
@@ -91,6 +94,8 @@ void hal_gpio_ds1302_dat_pin_init(pin_mode_e mode)
   {
     HAL_GPIO_WritePin(DS1302_DAT_PORT, GPIO_MODE_OUTPUT_PP, GPIO_PIN_RESET);
   }
+
+  _data_pin_state = mode;
 }
 
 void hal_gpio_ds1302_dat_pin_deinit()
@@ -115,62 +120,44 @@ void hal_gpio_ds1302_rst_pin_init()
   HAL_GPIO_WritePin(DS1302_RST_PORT, DS1302_RST_PIN, GPIO_PIN_RESET);
 }
 
+/*====================== ================== ============================*/
+/*====================== HAL FOR DS1302 OPS ============================*/
+/*====================== ================== ============================*/
+
 void hal_gpio_ds1302_rst_pin_deinit()
 {
   HAL_GPIO_WritePin(DS1302_RST_PORT, DS1302_RST_PIN, GPIO_PIN_RESET);
   HAL_GPIO_DeInit(DS1302_RST_PORT, DS1302_RST_PIN);
 }
 
-#define U_DELAY 2
-
-int hal_gpio_ds1302_read(uint8_t reg, uint8_t *data, uint8_t size)
+int hal_gpio_ds1302_rst_write(uint8_t val)
 {
-  int resp = 0;
-
-  hal_gpio_ds1302_rst_pin_init();
-  hal_gpio_ds1302_clk_pin_init();
-  hal_gpio_ds1302_dat_pin_init(PIN_MODE_OUTPUT);
-
-  /* SEND REGISTERS */
-  HAL_GPIO_WritePin(DS1302_RST_PORT, DS1302_RST_PIN, BIT_1);
-  sw_udelay(U_DELAY);
-  for (int i = 0; i < 8; i++)
-  {
-    
-
-    HAL_GPIO_WritePin(DS1302_DAT_PORT, DS1302_DAT_PIN, (reg & 0x01));
-    reg >>= 1;
-    HAL_GPIO_WritePin(DS1302_CLK_PORT, DS1302_CLK_PIN, BIT_0);
-    sw_udelay(U_DELAY);
-    HAL_GPIO_WritePin(DS1302_CLK_PORT, DS1302_CLK_PIN, BIT_1);
-    sw_udelay(U_DELAY);
-  }
-  HAL_GPIO_WritePin(DS1302_DAT_PORT, DS1302_DAT_PIN, BIT_0);
-  
-  hal_gpio_ds1302_dat_pin_deinit();
-  hal_gpio_ds1302_dat_pin_init(PIN_MODE_INPUT);
-
-  for (int i = 0; i < 8; i++)
-  {
-    HAL_GPIO_WritePin(DS1302_CLK_PORT, DS1302_CLK_PIN, BIT_0);
-    if (HAL_GPIO_ReadPin(DS1302_DAT_PORT, DS1302_DAT_PIN) == BIT_1)
-    {
-      resp |= (BIT_1 << (8 - i));
-    }
-    sw_udelay(U_DELAY);
-    HAL_GPIO_WritePin(DS1302_CLK_PORT, DS1302_CLK_PIN, BIT_1);
-    sw_udelay(U_DELAY);
-  }
-
-  HAL_GPIO_WritePin(DS1302_RST_PORT, DS1302_RST_PIN, BIT_0);
-  hal_gpio_ds1302_dat_pin_deinit();
-  hal_gpio_ds1302_dat_pin_init(PIN_MODE_OUTPUT);
-  return resp;
-}
-
-
-
-int hal_gpio_ds1302_write(uint8_t reg, uint8_t *data, uint8_t size)
-{
+  HAL_GPIO_WritePin(DS1302_RST_PORT, DS1302_RST_PIN, val);
   return 0;
 }
+
+int hal_gpio_ds1302_clk_write(uint8_t val)
+{
+  HAL_GPIO_WritePin(DS1302_CLK_PORT, DS1302_CLK_PIN, val);
+  return 0;
+}
+int hal_gpio_ds1302_dat_set_mode(uint8_t mode)
+{
+  if (mode == _data_pin_state)
+  {
+    return 0;
+  }
+  // hal_gpio_ds1302_deinit();
+  hal_gpio_ds1302_dat_pin_init(mode);
+  return 0;
+}
+int hal_gpio_ds1302_dat_write(uint8_t val)
+{
+  HAL_GPIO_WritePin(DS1302_DAT_PORT, DS1302_DAT_PIN, val);
+  return 0;
+}
+
+int hal_gpio_ds1302_dat_read(void)
+{
+  return HAL_GPIO_ReadPin(DS1302_DAT_PORT, DS1302_DAT_PIN);
+};

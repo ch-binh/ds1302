@@ -59,3 +59,14 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *uartHandle)
     HAL_NVIC_DisableIRQ(USART1_IRQn);
   }
 }
+
+void hal_uart_prinf(const char *format, ...)
+{
+  char buffer[UART_BUFFER_SIZE];
+  va_list args;
+  va_start(args, format);
+  vsnprintf(buffer, sizeof(buffer), format, args);
+  va_end(args);
+
+  HAL_UART_Transmit(&huart1, (uint8_t *)buffer, strlen(buffer), HAL_MAX_DELAY);
+}

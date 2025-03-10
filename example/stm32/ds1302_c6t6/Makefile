@@ -39,7 +39,6 @@ C_SOURCES =  \
 Src/main.c \
 Src/hal_gpio.c \
 Src/hal_usart.c \
-Src/hal_uart_print.c	\
 Src/syscfg.c	\
 Src/stm32f1xx_it.c \
 Src/stm32f1xx_hal_msp.c \
