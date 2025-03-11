@@ -19,6 +19,7 @@ void sw_udelay(uint32_t us)
   }
 }
 
+/* Link the STM32 HAL to ds1302 operations*/
 void ds1302_com_init(void)
 {
   ds1302_hw_ops_t ds1302_hw = {
@@ -34,12 +35,14 @@ void ds1302_com_init(void)
 
 int main(void)
 {
+  /* Initiate STM32 hardware peripherals */
   HAL_Init();
   SystemClock_Config();
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   ds1302_com_init();
 
+  /* Write clock */
   datetime_t time_keeper;
   datetime_t set_time = DATETIME_INIT(30, 59, 23, 31, 12, 7, 1); /// 30 secs to happy new year!!!
   ds1302_en_write();
@@ -47,13 +50,14 @@ int main(void)
 
   while (1)
   {
+    /* Blink for visual */
     HAL_GPIO_TogglePin(BUILTIN_LED_PORT, BUILTIN_LED_PIN);
     HAL_Delay(1000);
 
     /* Read all of the time variables*/
     ds1302_read_time(&time_keeper, REG_READ_BURST);
 
-    hal_uart_prinf("%d:%d:%d:%d:%d:%d:%d \n",
+    hal_uart_printf("%d:%d:%d:%d:%d:%d:%d \n",
                    time_keeper.seconds,
                    time_keeper.minutes,
                    time_keeper.hours,

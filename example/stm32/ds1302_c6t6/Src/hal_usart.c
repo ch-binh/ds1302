@@ -60,7 +60,7 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *uartHandle)
   }
 }
 
-void hal_uart_prinf(const char *format, ...)
+void hal_uart_printf(const char *format, ...)
 {
   char buffer[UART_BUFFER_SIZE];
   va_list args;

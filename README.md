@@ -3,9 +3,10 @@
 ## Overview
 The **DS1302** is a real-time clock (RTC) module that keeps track of time and date. This C driver allows communication with the DS1302 using a microcontroller over a **3-wire SPI interface** (CE, SCLK, I/O).
 
+Currently example only supports for STM32F103, feel free to contact me if you need any help or develop additional features.
+
 ## Features
-- Read and write **time** (HH:MM:SS)
-- Read and write **date** (DD/MM/YYYY, Day of the week)
+- Read and write **datetime** (SS:MN:HH:DD:MM:WD:YR)
 
 ## Hardware Requirements
 - **Microcontroller** (e.g., STM32, AVR, ESP32, etc.)
@@ -131,8 +132,9 @@ int hal_gpio_ds1302_rst_write(uint8_t val)
 - Condition: Input supply to VCC2 (main power souce)
 - Result: 30uA @ 2V (datasheet: 25uA) and 88uA @5V (datasheet: 80uA)
 
-![Power consumption @ 2V, supply with main power, result 30uA](doc/pwr_consump_at_2V_VCC2.png)
-![Power consumption @ 5V, supply with main power, result 88uA](doc/pwr_consump_at_5V_VCC2.png)
+![Implemented hardwares](doc/stm32_ds1302.jpg)
+![Power consumption @ 2V, supplied with main power, result 30uA](doc/pwr_consump_at_2V_VCC2.png)
+![Power consumption @ 5V, supplied with main power, result 88uA](doc/pwr_consump_at_5V_VCC2.png)
 
 ## License
 This driver is open-source and can be used freely in any project.
