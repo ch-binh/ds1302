@@ -6,16 +6,16 @@
 #include "board_config.h"
 #include "ds1302.h"
 
-#define CLOCK_SPEED_MHZ 72
+#define CLOCK_SPEED 8000000
 
 /* For simplicity, I dont use timer here, so the delay is
 significantly inaccurate. 2us -> 13us */
 void sw_udelay(uint32_t us)
 {
-  for (int i = 0; i < us; i++)
+  uint32_t clock_ticks = us * (uint32_t)(CLOCK_SPEED / 1000000);
+  for (uint32_t i = 0; i < clock_ticks; i++)
   {
-    for (int j = 0; j < CLOCK_SPEED_MHZ; j++)
-      ; // one us
+    __NOP();
   }
 }
 
